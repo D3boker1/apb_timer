@@ -16,6 +16,7 @@
 `define PRESCALER_STARTBIT        'd3
 `define PRESCALER_STOPBIT         'd5
 `define ENABLE_BIT                'd0
+`define AUTORST_BIT               'd1
 
 module timer
 #(
@@ -72,7 +73,7 @@ module timer
         cycle_counter_n = cycle_counter_q + 1;
 
         // reset timer after cmp or overflow
-        if (irq_o[0] == 1'b1 || irq_o[1] == 1'b1)
+        if ((irq_o[0] == 1'b1 || irq_o[1] == 1'b1) && regs_q[`REG_TIMER_CTRL][`AUTORST_BIT])
             regs_n[`REG_TIMER] = 1'b0;
         else if(regs_q[`REG_TIMER_CTRL][`ENABLE_BIT] && prescaler_int != 'b0 && prescaler_int == cycle_counter_q) // prescaler
         begin
